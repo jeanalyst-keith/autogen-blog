@@ -29,6 +29,7 @@ jobs:
           fi
           echo "file=$FILE" >> $GITHUB_OUTPUT
 
+
       - name: Publish to Hashnode
         if: steps.find.outputs.file != ''
         env:
@@ -61,23 +62,22 @@ jobs:
           tags = meta.get('tags', [])
           # published flag is not used – publishPost always publishes
 
-
-
-
           api_key = os.getenv('HASHNODE_API_KEY')
           publication_id = os.getenv('HASHNODE_PUBLICATION_ID')
           if not api_key or not publication_id:
               print("Missing HASHNODE_API_KEY or HASHNODE_PUBLICATION_ID secret")
               exit(0)
 
+
           url = 'https://gql.hashnode.com'
           query = '''
           mutation PublishPost($input: PublishPostInput!) {
             publishPost(input: $input) {
-              post { _id, slug, title }
+              post { id, slug, title }
             }
           }
-          '''
+          '''   # changed _id to id
+
           variables = {
               "input": {
                   "title": title,
