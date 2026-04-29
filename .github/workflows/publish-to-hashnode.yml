@@ -29,7 +29,6 @@ jobs:
           fi
           echo "file=$FILE" >> $GITHUB_OUTPUT
 
-
       - name: Publish to Hashnode
         if: steps.find.outputs.file != ''
         env:
@@ -69,6 +68,9 @@ jobs:
               exit(0)
 
 
+          # Create tag objects with both name and slug
+          tag_objects = [{"name": t, "slug": t.lower().replace(' ', '-')} for t in tags]
+
           url = 'https://gql.hashnode.com'
           query = '''
           mutation PublishPost($input: PublishPostInput!) {
@@ -76,13 +78,12 @@ jobs:
               post { id, slug, title }
             }
           }
-          '''   # changed _id to id
-
+          '''
           variables = {
               "input": {
                   "title": title,
                   "contentMarkdown": body,
-                  "tags": [{"name": t} for t in tags],
+                  "tags": tag_objects,            # <-- now with name + slug
                   "publicationId": publication_id
               }
           }
